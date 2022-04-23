@@ -1,5 +1,6 @@
 package com.company;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Stack;
 
@@ -9,7 +10,7 @@ import static com.company.Menu.getRandomNum;
 
 
 
-public class Sudoku {
+public class Sudoku implements Serializable {
     private int[][] gameBoard = new int[9][9];
     private int[][] startingBoard = new int[9][9];
     private Stack<Action> moves;
@@ -65,22 +66,27 @@ public class Sudoku {
         this.gameBoard[action.getRow()][action.getColumn()] = action.getValue();
         moves.push(action);
 
+        redoMoves.removeAllElements();
     }
 
     public void undo( ){
-        Action action = moves.pop();
+        if(!this.moves.isEmpty()){
+            Action action = moves.pop();
 
-        this.gameBoard[action.getRow()][action.getColumn()] = action.getPreviousValue();
-        redoMoves.push(action);
+            this.gameBoard[action.getRow()][action.getColumn()] = action.getPreviousValue();
+            redoMoves.push(action);
+        }
+
 
     }
 
     public void redo( ){
-        Action action = redoMoves.pop();
+        if(!this.redoMoves.isEmpty()) {
+            Action action = redoMoves.pop();
 
-        this.gameBoard[action.getRow()][action.getColumn()] = action.getValue();
-        moves.push(action);
-
+            this.gameBoard[action.getRow()][action.getColumn()] = action.getValue();
+            moves.push(action);
+        }
     }
     public void prepareGameBoard(int fieldsToRemove ){
         int row ;
@@ -135,7 +141,7 @@ public class Sudoku {
         }
     }
 
-    // prefils the board before the solver to make the sudoku random
+    // prefills the board before the solver to make the sudoku random
     public boolean prefil( int rowNum){
         boolean result = true;
 
@@ -179,7 +185,7 @@ public class Sudoku {
         for(int row = 0; row <this.gameBoard.length;row++){
             for(int col = 0; col <this.gameBoard[row].length;col++){
                 if( this.gameBoard[row][col] == 0) {
-                    for(int number = 1  ; number <= 9; number ++ ){
+                    for(int number = 1  ; number <= this.getGameBoard().length; number ++ ){
                         if(isActionValid(number,row,col)){
                             this.gameBoard[row][col] = number;
                             if(solve()){
@@ -200,7 +206,7 @@ public class Sudoku {
 
     public boolean isValidRowCheck( int digit, int row){
         boolean result = true;
-        for ( int i = 0 ; i < 9; i++ ){
+        for ( int i = 0 ; i < this.getGameBoard().length; i++ ){
             if( this.gameBoard[row][i] == digit ){
                 result = false;
             }
@@ -210,7 +216,7 @@ public class Sudoku {
     }
     public boolean isValidColumnCheck(int digit, int column){
         boolean result = true;
-        for( int i = 0 ; i < 9; i++ ){
+        for( int i = 0 ; i < this.getGameBoard().length; i++ ){
             if( this.gameBoard[i][column] == digit){
                 result = false;
             }
@@ -239,8 +245,8 @@ public class Sudoku {
     }
     public boolean finish(){
         boolean result = true;
-        for(int row = 0 ; row <9 ;row++){
-            for (int col = 0; col <9; row++){
+        for(int row = 0 ; row < this.getGameBoard().length ;row++){
+            for (int col = 0; col < this.getGameBoard().length ; col++){
                 if(this.getGameBoard()[row][col] == 0){
                     result = false;
                 }

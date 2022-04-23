@@ -1,5 +1,8 @@
 package com.company;
-public class Action {
+
+import java.io.Serializable;
+
+public class Action implements Serializable {
 
     private int row;
     private int column;
