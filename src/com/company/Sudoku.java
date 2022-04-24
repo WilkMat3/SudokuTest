@@ -15,6 +15,7 @@ public class Sudoku implements Serializable {
     private int[][] startingBoard = new int[9][9];
     private Stack<Action> moves;
     private Stack<Action> redoMoves;
+    private int[] counter = new int[9];
     public int[][] getGameBoard() {
         return gameBoard;
     }
@@ -139,6 +140,24 @@ public class Sudoku implements Serializable {
 
             }
         }
+        trackNumbers();
+        for( int i = 0;i <9 ;i++){
+            if(i == 0){
+                System.out.print("Numbers : " + (i+1) +" |");
+            }else{
+                System.out.print(" "+(i+1)+" |");
+            }
+        }
+        System.out.println();
+        for( int i = 0;i <9 ;i++){
+            if(i == 0){
+                System.out.print("Counter : " + counter[i] +" |");
+            }else{
+                System.out.print(" "+counter[i]+" |");
+            }
+
+        }
+        System.out.println();
     }
 
     // prefills the board before the solver to make the sudoku random
@@ -253,5 +272,16 @@ public class Sudoku implements Serializable {
             }
         }
         return result;
+    }
+    public void trackNumbers(){
+        for( int row = 0 ; row < this.gameBoard.length; row ++){
+
+            for(int col = 0; col < this.gameBoard.length; col++ ){
+                if(this.gameBoard[row][col] != 0){
+                    counter[this.gameBoard[row][col] -1 ] +=1;
+                }
+
+            }
+        }
     }
 }

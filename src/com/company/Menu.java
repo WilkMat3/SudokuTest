@@ -151,7 +151,10 @@ public class Menu
 
         Scanner input = new Scanner(System.in);  // Create a Scanner object
         sudoku.printBoard();
-        System.out.println("Select one of the options 1 - to enter a digit  2 - to undo  3 - to redo  4- to save game  5- to exit " );
+        System.out.println("Rules:");
+        System.out.println("Fill in any row, column, or 3×3 region with the numbers 1-9 exactly once.");
+        System.out.println("Options:");
+        System.out.println("Select one of the options 1 - to enter a digit  2 - to undo  3 - to redo  4- to save game  5- when you completed the sudoku or you want to give up " );
         String choice = input.nextLine();
 
 
@@ -204,11 +207,11 @@ public class Menu
                 StartGame("Easy",31,26);
 
             case "2":
-                StartGame("Medium",35,32);
+                StartGame("Medium",36,32);
 
             case "3":
 
-                StartGame("HARD",40,36);
+                StartGame("HARD",41,37);
 
             case "4":
                 System.out.println("Enter File Name of you previous game");
