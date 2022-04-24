@@ -4,6 +4,7 @@ package com.company;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -181,6 +182,14 @@ public class Menu
                     System.out.println("Finish");
 
                     System.out.println(completeGame(sudoku));
+                    System.out.println("Do you want to save this game ? Y/N");
+                    String saveFinish = input.nextLine();
+                    if(saveFinish.equals("y")){
+                        System.out.println("Enter File Name of your game");
+                        String name = input.nextLine();
+                        saveData(sudoku,name);
+                    }
+
                     run();
                     break;
 
@@ -214,9 +223,18 @@ public class Menu
                 StartGame("HARD",41,37);
 
             case "4":
-                System.out.println("Enter File Name of you previous game");
+                System.out.println("Enter file name of the game you want to load ");
                 String filename = input.nextLine();
-                readData(filename);
+                System.out.println("Do you want to automatically replay the game ? Y/N");
+                String decison = input.nextLine();
+                if(decison.equals("Y")){
+                    readData(filename,true);
+                }else if ( decison.equals("N")){
+                    readData(filename,false);
+                }else{
+                    System.out.println("your input was invalid");
+                }
+
 
             case "5":
                 System.out.println("EXIT");
@@ -238,6 +256,7 @@ public class Menu
         allData.add(sudoku.getStartingBoard());
         allData.add(sudoku.getMoves());
         allData.add(sudoku.getRedoMoves());
+        allData.add(sudoku.getReverseMoves());
         try{
             FileOutputStream fileOutput = new FileOutputStream(fname+".ser");
             ObjectOutputStream output = new ObjectOutputStream(fileOutput);
@@ -250,7 +269,7 @@ public class Menu
         }
     }
 
-    public void readData(String fname) throws IOException {
+    public void readData(String fname, boolean isAutmaticReplyActive) throws IOException {
         ArrayList<Object> loadedData = new ArrayList<>();
 
         try {
@@ -271,18 +290,60 @@ public class Menu
         int[][] startingBoard = (int[][]) loadedData.get(1);
         Stack<Action> moves = (Stack<Action>) loadedData.get(2);
         Stack<Action> redoMoves = (Stack<Action>) loadedData.get(3);
-
+        Queue<Action> reverseMoves = (Queue<Action>) loadedData.get(4);
 
         Sudoku sudoku = new Sudoku();
         sudoku.setGameBoard(gameBoard);
         sudoku.setStartingBoard(startingBoard);
         sudoku.setMoves(moves);
         sudoku.setRedoMoves(redoMoves);
-        inGameMenu(sudoku);
+        sudoku.setReverseMoves(reverseMoves);
+        if(isAutmaticReplyActive){
+            runAutomaticReply(sudoku);
+        }else{
+            inGameMenu(sudoku);
+        }
+
 
 
     }
 
+    private void runAutomaticReply(Sudoku sudoku) throws IOException {
+
+        Scanner input = new Scanner(System.in);  // Create a Scanner object
+        sudoku.printBoard();
+
+
+        System.out.println("Options:");
+        System.out.println("Select one of the options 1 - next move 2 - last move  3 - auto  4- exit  ");
+        String choice = input.nextLine();
+
+
+
+
+        switch (choice) {
+            case "1":
+                nextMove(sudoku);
+                runAutomaticReply(sudoku);
+
+            case "2":
+                previousMove(sudoku);
+                runAutomaticReply(sudoku);
+
+            case "3":
+                runAutomaticReply(sudoku);
+
+            case "4":
+                run();
+                break;
+
+
+            default:
+                System.out.println("Enter a number within the range");
+                break;
+        }
     }
+
+}
 
 

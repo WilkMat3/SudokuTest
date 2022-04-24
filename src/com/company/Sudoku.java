@@ -2,6 +2,8 @@ package com.company;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 import static com.company.Menu.getRandomNum;
@@ -15,6 +17,7 @@ public class Sudoku implements Serializable {
     private int[][] startingBoard = new int[9][9];
     private Stack<Action> moves;
     private Stack<Action> redoMoves;
+    public Queue<Action> reverseMoves;
     private int[] counter = new int[9];
     public int[][] getGameBoard() {
         return gameBoard;
@@ -47,12 +50,19 @@ public class Sudoku implements Serializable {
         this.redoMoves = redoMoves;
     }
 
+    public Queue<Action> getReverseMoves() {
+        return reverseMoves;
+    }
 
+    public void setReverseMoves(Queue<Action> reverseMoves) {
+        this.reverseMoves = reverseMoves;
+    }
 
 
     public Sudoku(){
         moves = new Stack<Action>();
-        redoMoves =new Stack<Action>();
+        redoMoves = new Stack<Action>();
+        reverseMoves = new LinkedList<>();
         for( int row = 0 ;row < this.gameBoard.length; row++){
             for(int column = 0 ; column < this.gameBoard.length; column++){
                 this.gameBoard[row][column] = 0;
@@ -66,7 +76,7 @@ public class Sudoku implements Serializable {
         action.setPreviousValue(this.gameBoard[action.getRow()][action.getColumn()]);
         this.gameBoard[action.getRow()][action.getColumn()] = action.getValue();
         moves.push(action);
-
+        reverseMoves.add(action);
         redoMoves.removeAllElements();
     }
 
