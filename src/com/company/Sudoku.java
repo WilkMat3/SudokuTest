@@ -5,20 +5,25 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.concurrent.TimeUnit;
 
 import static com.company.Menu.getRandomNum;
 
-
+/**
+ * Class represents sudoku game
+ *
+ */
 
 
 
 public class Sudoku implements Serializable {
-    private int[][] gameBoard = new int[9][9];
-    private int[][] startingBoard = new int[9][9];
-    private Stack<Action> moves;
-    private Stack<Action> redoMoves;
-    public Queue<Action> reverseMoves;
-    private int[] counter = new int[9];
+    private int[][] gameBoard = new int[9][9]; // where game is played
+    private int[][] startingBoard = new int[9][9]; // tracks the starting board
+    private Stack<Action> moves; // all moves made to date
+    private Stack<Action> redoMoves; // used for redoing moves
+    public Queue<Action> reverseMoves; // used for automatic replay
+    private int[] counter = new int[9]; // tracks the number of number between 1-9 on the board
+    // getters & setters
     public int[][] getGameBoard() {
         return gameBoard;
     }
@@ -58,7 +63,7 @@ public class Sudoku implements Serializable {
         this.reverseMoves = reverseMoves;
     }
 
-
+// constructor
     public Sudoku(){
         moves = new Stack<Action>();
         redoMoves = new Stack<Action>();
@@ -72,14 +77,15 @@ public class Sudoku implements Serializable {
 
 
     }
+    // adds the number to the board and to correct stack/queue
     public void setNum( Action action){
-        action.setPreviousValue(this.gameBoard[action.getRow()][action.getColumn()]);
+        action.setPreviousValue(this.gameBoard[action.getRow()][action.getColumn()]); // keep track of previous value on the field
         this.gameBoard[action.getRow()][action.getColumn()] = action.getValue();
         moves.push(action);
         reverseMoves.add(action);
-        redoMoves.removeAllElements();
+        redoMoves.removeAllElements(); // this is done to not break the sequence of moves
     }
-
+// undo method - adding to correct stack
     public void undo( ){
         if(!this.moves.isEmpty()){
             Action action = moves.pop();
@@ -90,7 +96,7 @@ public class Sudoku implements Serializable {
 
 
     }
-
+// redo method adding to correct stack
     public void redo( ){
         if(!this.redoMoves.isEmpty()) {
             Action action = redoMoves.pop();
@@ -99,6 +105,8 @@ public class Sudoku implements Serializable {
             moves.push(action);
         }
     }
+
+    // replaces x amount of fields with 0s to create the initial board
     public void prepareGameBoard(int fieldsToRemove ){
         int row ;
         int col ;
@@ -119,6 +127,9 @@ public class Sudoku implements Serializable {
 
         }
     }
+
+
+    //  printing the board in desired format
 
     public void printBoard(){
 
@@ -150,7 +161,7 @@ public class Sudoku implements Serializable {
 
             }
         }
-        trackNumbers();
+        trackNumbers(); // printing the tracked numbers
         for( int i = 0;i <9 ;i++){
             if(i == 0){
                 System.out.print("Numbers : " + (i+1) +" |");
@@ -168,70 +179,69 @@ public class Sudoku implements Serializable {
 
         }
         System.out.println();
+        this.counter = new int[9]; // reassinging the counter so the method does not double the values
     }
 
     // prefills the board before the solver to make the sudoku random
     public boolean prefil( int rowNum){
         boolean result = true;
-
+// loops thorugh whole board
         for(int col = 0; col <this.gameBoard.length;col++) {
 
+                while( this.gameBoard[rowNum][col] ==0){ // only number that are  0s are changed
 
 
-            if ( this.gameBoard[rowNum][col] == 0 ){
+                    int num = getRandomNum(9,1); // gets random number between 1 - 9
 
-                /// loop here
-                while( this.gameBoard[rowNum][col] ==0){
-
-
-                    int num = getRandomNum(9,1);
-
-                    if (isActionValid(num, rowNum, col)) {
+                    if (isActionValid(num, rowNum, col)) { // check if number can be placed
                         this.gameBoard[rowNum][col] = num;
                         num =getRandomNum(9,1);
-                        if(prefil(  rowNum)){
-                            result = true;
-                            return result;
+                        if(prefil( rowNum)){
+
+                            return true;
                         }else{
-                            this.gameBoard[rowNum][col] = 0;
-                            prefil(rowNum);
+                            this.gameBoard[rowNum][col] = 0; // set back to 0 if not
+                            prefil(rowNum); //try new number - very important call
                         }
 
 
                     }else {
-                        result= false;
-                        return result;
+
+                        return false;
 
                     }
                 }
-            }
+
         }
-        return result;
+        return true;
     }
     // solves the board needs to return true for the board to be valid
     public boolean solve(){
 
-        for(int row = 0; row <this.gameBoard.length;row++){
+        for(int row = 0; row <this.gameBoard.length;row++){ // loop through the board
             for(int col = 0; col <this.gameBoard[row].length;col++){
-                if( this.gameBoard[row][col] == 0) {
-                    for(int number = 1  ; number <= this.getGameBoard().length; number ++ ){
-                        if(isActionValid(number,row,col)){
-                            this.gameBoard[row][col] = number;
-                            if(solve()){
+                if( this.gameBoard[row][col] == 0) { // check if the field should be filled
+                    for(int number = 1  ; number <= this.getGameBoard().length; number ++ ){ // try all numbers
+                        if(isActionValid(number,row,col)){ // check if number can be placed
+                            this.gameBoard[row][col] = number; // place the board
+                            if(solve()){ // recursive call for backtracking
                                 return true;
-                            }else{
+                            }else{ // set the field back to 0 if the solution is not valid
                                 this.gameBoard[row][col] = 0;
                             }
                         }
                     }
-                    return false;
+                    return false; // only if it is unable to place any number in the row
                 }
             }
         }
         return true;
     }
 
-// todo helper validation row column box    check input if not in initial board
+
+
+
+      //helper methods  for validation in row, column and box.
 
     public boolean isValidRowCheck( int digit, int row){
         boolean result = true;
@@ -252,7 +262,7 @@ public class Sudoku implements Serializable {
         }
         return result;
     }
-    public boolean isValidBoxCheck(int digit, int row, int column ){
+    public boolean isValidBoxCheck(int digit, int row, int column ){ // finds the topleft positon of the 3x3 box and loops through numbers there
         boolean result = true;
         int boxRow = row - (row %  3);
         int boxColumn = column - (column % 3);
@@ -265,7 +275,8 @@ public class Sudoku implements Serializable {
         }
         return result;
     }
-    public boolean isActionValid( int digit, int row, int column){
+
+    public boolean isActionValid( int digit, int row, int column){ // use all helper methods to check validity
         boolean result = false;
         if (isValidRowCheck(digit, row) && isValidColumnCheck(digit, column) && isValidBoxCheck(digit,row, column) ){
             result = true;
@@ -283,6 +294,8 @@ public class Sudoku implements Serializable {
         }
         return result;
     }
+
+    // used to track numbers on the board - the last line of print method would reset the counter array, so it's not doubling the values
     public void trackNumbers(){
         for( int row = 0 ; row < this.gameBoard.length; row ++){
 
@@ -294,4 +307,6 @@ public class Sudoku implements Serializable {
             }
         }
     }
+
+
 }

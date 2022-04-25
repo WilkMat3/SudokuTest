@@ -2,6 +2,9 @@ package com.company;
 
 import java.io.Serializable;
 
+/**
+ * Class represents input to the board
+ */
 public class Action implements Serializable {
 
     private int row;
