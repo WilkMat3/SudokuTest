@@ -8,11 +8,11 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Menu menu = new Menu();
 
-        menu.run();
+       // menu.run();
 
-        // left for measuring the
-     /*   ArrayList<Long> allT = new ArrayList<Long>();
-        for(int i = 0; i < 10; i++) {
+        // left for measuring the efficiency
+        ArrayList<Long> allT = new ArrayList<Long>();
+        for(int i = 0; i < 1000; i++) {
 
 
             long start = System.nanoTime();
@@ -38,7 +38,7 @@ public class Main {
         System.out.println("The Average is: " + avg);
 
 
-*/
+
     }
 
 
