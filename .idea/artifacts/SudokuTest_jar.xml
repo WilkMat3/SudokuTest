@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="SudokuTest:jar">
+  <artifact type="jar" name="SudokuTest:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/SudokuTest_jar</output-path>
     <root id="archive" name="SudokuTest.jar">
       <element id="module-output" name="SudokuTest" />
