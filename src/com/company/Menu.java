@@ -8,7 +8,7 @@ import java.util.*;
 public class Menu
 {
 
-        // method used to get a random number within specified range
+    // method used to get a random number within specified range
     public static   int getRandomNum(int max , int min){
         int num = (int)(Math.random()*(max-min+1)+min);
 
@@ -25,7 +25,7 @@ public class Menu
 
             if(toBeChecked >= min && toBeChecked <= max){
                 result = true; //this line won't be executed if parsing fails
-             //   System.out.println(" comparison" + result);
+                //   System.out.println(" comparison" + result);
             }else{
                 System.out.println("Number not within range");
             }
@@ -41,30 +41,30 @@ public class Menu
         boolean result = true;
         if(sudoku.getStartingBoard()[row][column] != 0){
             result = false;
-          //  System.out.println("check if place is prepopulated" + result);
+            //  System.out.println("check if place is prepopulated" + result);
         }
         if(result == true){
             if(!sudoku.isActionValid(value,row,column)){
                 result = false;
-               // System.out.println("check if action is valid" + result);
+                // System.out.println("check if action is valid" + result);
             }
         }
         return result;
     }
-// checks if the input is valid using helper methods that check if inpu is a valid int within range and if it is not on the initial board
+    // checks if the input is valid using helper methods that check if inpu is a valid int within range and if it is not on the initial board
     public  boolean boardInputChecks (String row, String col, String val, Sudoku sudoku){
         boolean result = true;
         if(!valueIsAnIntWithRange(row,9,1)){
             result = false;
-       //     System.out.println(" row r" + result);
+            //     System.out.println(" row r" + result);
         }
         if (! valueIsAnIntWithRange(col,9,1)){
             result = false;
-         //   System.out.println(" col r" + result);
+            //   System.out.println(" col r" + result);
         }
         if ( !valueIsAnIntWithRange(val,9,0)){
             result = false;
-        //    System.out.println(" val r" +result);
+            //    System.out.println(" val r" +result);
         }
         if(result== true){ // only checking this if other checks are returning true
             int parsedRow = Integer.parseInt(row) - 1;
@@ -72,13 +72,13 @@ public class Menu
             int parsedVal = Integer.parseInt(val);
             if( !checkInitialBoard(sudoku,parsedRow,parsedCol,parsedVal)){
                 result=false;
-               // System.out.println(" check initial ");
+                // System.out.println(" check initial ");
             }
         }
 
         return result;
     }
-// method that returns a string depending on the completion of the board
+    // method that returns a string depending on the completion of the board
     public String completeGame(Sudoku sudoku){
         String result = " Congrats you completed the sudoku ";
         if(!sudoku.finish()){
@@ -115,24 +115,17 @@ public class Menu
     public  void automaticMove(Sudoku sudoku) throws IOException {
 
 
-            sudoku.setNum(sudoku.getReverseMoves().poll()); // using the queue
+        sudoku.setNum(sudoku.getReverseMoves().poll()); // using the queue
 
         automaticGameMenu(sudoku); // go back to the menu
-        }
+    }
 
 
 
     public  Sudoku generateGame(){
         Sudoku sudoku = new Sudoku();
-        boolean valid = false;
-        do {
-            if (sudoku.prefil(getRandomNum(8,0)) && sudoku.prefil(getRandomNum(8,0))){ //prefill 2 random rows they can be the same
-                valid = true;
-                break;
-            } else{
-                generateGame();
-            }
-        }while( valid == false ); // runs until the random rows don't contradict each other in any way
+
+
         while(!sudoku.solve()){ // runs until it is solved
 
         }
@@ -160,49 +153,49 @@ public class Menu
 
 
 
-            switch (choice) {
-                case "1":
-                    manipulateBoard(sudoku);
+        switch (choice) {
+            case "1":
+                manipulateBoard(sudoku);
 
-                case "2":
-                    sudoku.undo();
-                    inGameMenu(sudoku);
+            case "2":
+                sudoku.undo();
+                inGameMenu(sudoku);
 
-                case "3":
-                    sudoku.redo();
-                    inGameMenu(sudoku);
+            case "3":
+                sudoku.redo();
+                inGameMenu(sudoku);
 
-                case "4":
+            case "4":
+                System.out.println("Enter File Name of your game");
+                String filename = input.nextLine();
+                saveData(sudoku,filename);
+                inGameMenu(sudoku);
+            case "5":
+                System.out.println("Finish");
+
+                System.out.println(completeGame(sudoku));
+                System.out.println("Do you want to save this game ? Y/N");
+                String saveFinish = input.nextLine();
+                if(saveFinish.equalsIgnoreCase("Y")){
                     System.out.println("Enter File Name of your game");
-                    String filename = input.nextLine();
-                    saveData(sudoku,filename);
-                    inGameMenu(sudoku);
-                case "5":
-                    System.out.println("Finish");
-
-                    System.out.println(completeGame(sudoku));
-                    System.out.println("Do you want to save this game ? Y/N");
-                    String saveFinish = input.nextLine();
-                    if(saveFinish.equalsIgnoreCase("Y")){
-                        System.out.println("Enter File Name of your game");
-                        String name = input.nextLine();
-                        saveData(sudoku,name);
-                        run();
-                    }else{
+                    String name = input.nextLine();
+                    saveData(sudoku,name);
                     run();
-                    }
+                }else{
+                    run();
+                }
 
 
-                    break;
+                break;
 
-                default:
-                    System.out.println("Enter a number within the range");
-                    inGameMenu(sudoku);
-                    break;
-            }
+            default:
+                System.out.println("Enter a number within the range");
+                inGameMenu(sudoku);
+                break;
+        }
 
     }
-// main menu
+    // main menu
     public  void run() throws IOException {
         Scanner input = new Scanner(System.in);  // Create a Scanner object
         System.out.println("Hello user, welcome to Sudoku game");
@@ -236,7 +229,7 @@ public class Menu
                     readData(filename,false);
                 }else{
                     System.out.println("your input was invalid");
-                   run();
+                    run();
                 }
 
 
@@ -251,10 +244,10 @@ public class Menu
 
         }
 
-        }
+    }
 
 
-// serialasing data and saving to file
+    // serialasing data and saving to file
     public void saveData(Sudoku sudoku, String fname) throws IOException {
         ArrayList<Object> allData = new ArrayList<>(); // various data types saved to this arraylist
         allData.add(sudoku.getGameBoard());
@@ -273,7 +266,7 @@ public class Menu
             System.out.println("Error when saving a file");
         }
     }
-
+    // reading the
     public void readData(String fname, boolean isAutmaticRepalyActive) throws IOException {
         ArrayList<Object> loadedData = new ArrayList<>();
 
@@ -287,7 +280,7 @@ public class Menu
             System.out.println("Error when loading a file");
             run();
             return;
-      } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
             run();
             return;
@@ -315,7 +308,7 @@ public class Menu
 
 
     }
-// automatic game menu  allows for replaying the game move by move
+    // automatic game menu  allows for replaying the game move by move
     private void automaticGameMenu(Sudoku sudoku) throws IOException {
 
         Scanner input = new Scanner(System.in);  // Create a Scanner object
@@ -345,7 +338,7 @@ public class Menu
                 if(playQ.equalsIgnoreCase("Y")){
                     inGameMenu(sudoku);
                 }else if ( playQ.equalsIgnoreCase("N")){
-                   run();
+                    run();
                 }else{
                     System.out.println("your input was invalid");
                     automaticGameMenu( sudoku);
@@ -362,5 +355,4 @@ public class Menu
     }
 
 }
-
 
